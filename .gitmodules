@@ -1,0 +1,12 @@
+[submodule "asgard/ohmyzsh"]
+	path = asgard/ohmyzsh
+	url = https://github.com/ohmyzsh/ohmyzsh.git
+[submodule "asgard/vimrc"]
+	path = asgard/vimrc
+	url = https://github.com/amix/vimrc.git
+[submodule "asgard/makeself"]
+	path = asgard/makeself
+	url = https://github.com/megastep/makeself.git
+[submodule "asgard/fzf"]
+	path = asgard/fzf
+	url = https://github.com/junegunn/fzf.git
