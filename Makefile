@@ -12,7 +12,7 @@ OUTPUT 			:= asgard.run
 
 all: $(OUTPUT)
 
-$(OUTPUT): $(wildcard $(asgard-dir)/*)
+$(OUTPUT): $(shell find $(asgard-dir))
 	$(MAKESELF) $(asgard-dir) $@ $(LABEL) $(STARTUP_SCRIPT)
 	@echo 'Third-party development tools or plugins archived in "$@"'
 	@$(foreach a, $(asgard-subdirs), \
