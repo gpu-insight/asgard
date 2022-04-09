@@ -519,6 +519,40 @@ EOF
 
 main "$@"
 
-# Back to the directory which the self-extracting script is invoked
-# echo "$USER_PWD"
-# cd "$USER_PWD"
+# Part of amix's vimrc setup
+VIMRC="${VIMRC:-$PWD/vimrc}"
+VIMRUNTIME="${VIMRUNTIME:-$HOME/.vim_runtime}"
+
+# Borrow from oh-my-zsh's setup_zshrc
+setup_vimrc() {
+  # Keep most recent old .vimrc at .vimrc.pre-amix, and older ones
+  # with datestamp of installation that moved them aside, so we never actually
+  # destroy a user's original vimrc
+  echo "${FMT_BLUE}Looking for an existing vim config...${FMT_RESET}"
+
+  # Must use this exact name so uninstall.sh can find it
+  OLD_VIMRC=~/.vimrc.pre-amix
+  if [ -f ~/.vimrc ] || [ -h ~/.vimrc ]; then
+    if [ -e "$OLD_VIMRC" ]; then
+      OLD_OLD_VIMRC="${OLD_VIMRC}-$(date +%Y-%m-%d_%H-%M-%S)"
+      if [ -e "$OLD_OLD_VIMRC" ]; then
+        fmt_error "$OLD_OLD_VIMRC exists. Can't back up ${OLD_VIMRC}"
+        fmt_error "re-run the installer again in a couple of seconds"
+        exit 1
+      fi
+      mv "$OLD_VIMRC" "${OLD_OLD_VIMRC}"
+
+      echo "${FMT_YELLOW}Found old ${OLD_VIMRC}." \
+        "${FMT_GREEN}Backing up to ${OLD_OLD_VIMRC}${FMT_RESET}"
+    fi
+    echo "${FMT_YELLOW}Found ~/.vimrc.${FMT_RESET} ${FMT_GREEN}Backing up to ${OLD_VIMRC}${FMT_RESET}"
+    mv ~/.vimrc "$OLD_VIMRC"
+  fi
+
+  echo "${FMT_GREEN}Copying amix's ultimate Vim configuration to ~/.vim_runtime" \
+    "and adding it to ~/.vimrc.${FMT_RESET}"
+
+  cp -r "$VIMRC" "$VIMRUNTIME" && sh "$VIMRUNTIME"/install_awesome_vimrc.sh
+}
+
+setup_vimrc
