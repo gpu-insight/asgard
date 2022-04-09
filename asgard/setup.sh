@@ -556,3 +556,26 @@ setup_vimrc() {
 }
 
 setup_vimrc
+
+# Part of junegunn's fzf setup
+FZF="${FZF:-$PWD/fzf}"
+FZF_BASE="${FZF_BASE:-$HOME/.fzf}"
+fzf_tar=$(find $PWD/bin/$(uname -m) -name 'fzf*')
+
+setup_fzf() {
+  case "$fzf_tar" in
+    *"tar.gz") ;;
+    *) return 1;;
+  esac
+
+  echo "${FMT_GREEN}Copying junegunn's fzf to ~/.fzf.${FMT_RESET}"
+  if [ -d "$FZF_BASE" ]; then
+    cp --remove-destination -r "$FZF"/* "$FZF_BASE"
+  else
+    cp -r "$FZF" "$FZF_BASE"
+  fi
+
+  tar -xzf "$fzf_tar" -C "$FZF_BASE"/bin && bash "$FZF_BASE"/install
+}
+
+setup_fzf
