@@ -579,3 +579,19 @@ setup_fzf() {
 }
 
 setup_fzf
+
+# John MacFarlane's pandoc setup
+PANDOC_BASE="${PANDOC_BASE:-$HOME/.local}"
+pandoc_tar=$(find $PWD/bin/$(uname -m) -name 'pandoc*')
+
+setup_pandoc() {
+  case "$pandoc_tar" in
+    *"tar.gz") ;;
+    *) return 1;;
+  esac
+
+  echo "${FMT_GREEN}Copying John MacFarlane's pandoc to ~/.local.${FMT_RESET}"
+  tar --strip-components=1 -xzf "$pandoc_tar" -C "$PANDOC_BASE"
+}
+
+setup_pandoc
