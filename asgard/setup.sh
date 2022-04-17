@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # This script should be run via curl:
 #   sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -65,6 +65,12 @@ CHSH=${CHSH:-yes}
 RUNZSH=${RUNZSH:-yes}
 KEEP_ZSHRC=${KEEP_ZSHRC:-no}
 
+# Setup options
+SETUP_ALL=${SETUP_ALL:-yes}
+SETUP_FZF=${SETUP_FZF:-no}
+SETUP_OMZ=${SETUP_OMZ:-no}
+SETUP_PDC=${SETUP_PDC:-no}
+SETUP_VIM=${SETUP_VIM:-no}
 
 command_exists() {
   command -v "$@" >/dev/null 2>&1
@@ -457,24 +463,12 @@ print_success() {
   printf '%s\n' $FMT_RESET
 }
 
-main() {
+setup_omz() {
   # Run as unattended if stdin is not a tty
   if [ ! -t 0 ]; then
     RUNZSH=no
     CHSH=no
   fi
-
-  # Parse arguments
-  while [ $# -gt 0 ]; do
-    case $1 in
-      --unattended) RUNZSH=no; CHSH=no ;;
-      --skip-chsh) CHSH=no ;;
-      --keep-zshrc) KEEP_ZSHRC=yes ;;
-    esac
-    shift
-  done
-
-  setup_color
 
   if ! command_exists zsh; then
     echo "${FMT_YELLOW}Zsh is not installed.${FMT_RESET} Please install zsh first."
@@ -517,14 +511,12 @@ EOF
   # exec zsh -l
 }
 
-main "$@"
-
 # Part of amix's vimrc setup
-VIMRC="${VIMRC:-$PWD/vimrc}"
-VIMRUNTIME="${VIMRUNTIME:-$HOME/.vim_runtime}"
-
 # Borrow from oh-my-zsh's setup_zshrc
 setup_vimrc() {
+  VIMRC="${VIMRC:-$PWD/vimrc}"
+  VIMRUNTIME="${VIMRUNTIME:-$HOME/.vim_runtime}"
+
   # Keep most recent old .vimrc at .vimrc.pre-amix, and older ones
   # with datestamp of installation that moved them aside, so we never actually
   # destroy a user's original vimrc
@@ -555,14 +547,12 @@ setup_vimrc() {
   cp -r "$VIMRC" "$VIMRUNTIME" && sh "$VIMRUNTIME"/install_awesome_vimrc.sh
 }
 
-setup_vimrc
-
 # Part of junegunn's fzf setup
-FZF="${FZF:-$PWD/fzf}"
-FZF_BASE="${FZF_BASE:-$HOME/.fzf}"
-fzf_tar=$(find $PWD/bin/$(uname -m) -name 'fzf*')
-
 setup_fzf() {
+  FZF="${FZF:-$PWD/fzf}"
+  FZF_BASE="${FZF_BASE:-$HOME/.fzf}"
+  fzf_tar=$(find $PWD/bin/$(uname -m) -name 'fzf*')
+
   case "$fzf_tar" in
     *"tar.gz") ;;
     *) return 1;;
@@ -578,13 +568,11 @@ setup_fzf() {
   tar -xzf "$fzf_tar" -C "$FZF_BASE"/bin && bash "$FZF_BASE"/install
 }
 
-setup_fzf
-
 # John MacFarlane's pandoc setup
-PANDOC_BASE="${PANDOC_BASE:-$HOME/.local}"
-pandoc_tar=$(find $PWD/bin/$(uname -m) -name 'pandoc*')
-
 setup_pandoc() {
+  PANDOC_BASE="${PANDOC_BASE:-$HOME/.local}"
+  pandoc_tar=$(find $PWD/bin/$(uname -m) -name 'pandoc*')
+
   case "$pandoc_tar" in
     *"tar.gz") ;;
     *) return 1;;
@@ -594,4 +582,24 @@ setup_pandoc() {
   tar --strip-components=1 -xzf "$pandoc_tar" -C "$PANDOC_BASE"
 }
 
-setup_pandoc
+main() {
+  # Parse arguments
+  while [ $# -gt 0 ]; do
+    case $1 in
+      --unattended) RUNZSH=no; CHSH=no ;;
+      --skip-chsh) CHSH=no ;;
+      --keep-zshrc) KEEP_ZSHRC=yes ;;
+      -s|--setup) eval SETUP_${2^^}=yes; SETUP_ALL=no; shift ;;
+    esac
+    shift
+  done
+
+  setup_color
+
+  if [ $SETUP_FZF = yes -o $SETUP_ALL = yes ]; then setup_fzf; fi
+  if [ $SETUP_OMZ = yes -o $SETUP_ALL = yes ]; then setup_omz; fi
+  if [ $SETUP_PDC = yes -o $SETUP_ALL = yes ]; then setup_pandoc; fi
+  if [ $SETUP_VIM = yes -o $SETUP_ALL = yes ]; then setup_vimrc; fi
+}
+
+main "$@"
