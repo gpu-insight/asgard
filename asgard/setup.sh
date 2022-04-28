@@ -596,8 +596,9 @@ main() {
 
   setup_color
 
-  if [ $SETUP_FZF = yes -o $SETUP_ALL = yes ]; then setup_fzf; fi
+  # Keep this precedence of setup
   if [ $SETUP_OMZ = yes -o $SETUP_ALL = yes ]; then setup_omz; fi
+  if [ $SETUP_FZF = yes -o $SETUP_ALL = yes ]; then setup_fzf; fi
   if [ $SETUP_PDC = yes -o $SETUP_ALL = yes ]; then setup_pandoc; fi
   if [ $SETUP_VIM = yes -o $SETUP_ALL = yes ]; then setup_vimrc; fi
 }
