@@ -8,6 +8,7 @@ The Asgard project itself will build NONE of honest-to-goodness tools. It just c
 - [junegunn/fzf](https://github.com/junegunn/fzf)
 - [megastep/makeself](https://github.com/megastep/makeself)
 - [ohmyzsh/ohmyzsh](https://github.com/ohmyzsh/ohmyzsh)
+- [jgm/pandoc](https://github.com/jgm/pandoc)
 
 # How to Build
 
