@@ -1,8 +1,8 @@
-.PHONY: all clean help
+.PHONY: all clean help summary
 
 asgard-dir  	:= asgard
 asgard-subdirs 	:= $(dir $(wildcard $(asgard-dir)/*/*))
-asgard-subdirs 	:= $(sort $(asgard-subdirs))
+asgard-subdirs 	:= $(filter-out %/bin/, $(sort $(asgard-subdirs)))
 
 MAKESELF 		:= $(abspath $(asgard-dir)/makeself/makeself.sh)
 LABEL			:= "ASGARD makes an easy life"
@@ -10,13 +10,15 @@ LABEL			:= "ASGARD makes an easy life"
 STARTUP_SCRIPT 	:= ./setup.sh
 OUTPUT 			:= asgard.run
 
-all: $(OUTPUT)
+all: $(OUTPUT) summary
 
 $(OUTPUT): $(shell find $(asgard-dir))
 	$(MAKESELF) $(asgard-dir) $@ $(LABEL) $(STARTUP_SCRIPT)
-	@echo 'Third-party development tools or plugins archived in "$@"'
-	@$(foreach a, $(asgard-subdirs), \
-		printf "  %-24s archived\\n" $(a);)
+
+summary:
+	@echo 'Third-party development tools or plugins archived in "$(OUTPUT)"'
+	@./utils/tree.sh $(asgard-dir)/bin/
+	@$(foreach a, $(asgard-subdirs), printf "%s\\n" $(a);)
 
 clean:
 	$(RM) $(OUTPUT)
