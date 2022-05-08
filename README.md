@@ -9,6 +9,7 @@ The Asgard project itself will build NONE of honest-to-goodness tools. It just c
 - [megastep/makeself](https://github.com/megastep/makeself)
 - [ohmyzsh/ohmyzsh](https://github.com/ohmyzsh/ohmyzsh)
 - [jgm/pandoc](https://github.com/jgm/pandoc)
+- [BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep)
 
 # How to Build
 

@@ -70,6 +70,7 @@ SETUP_ALL=${SETUP_ALL:-yes}
 SETUP_FZF=${SETUP_FZF:-no}
 SETUP_OMZ=${SETUP_OMZ:-no}
 SETUP_PDC=${SETUP_PDC:-no}
+SETUP_RIP=${SETUP_RIP:-no}
 SETUP_VIM=${SETUP_VIM:-no}
 
 command_exists() {
@@ -582,6 +583,22 @@ setup_pandoc() {
   tar --strip-components=1 -xzf "$pandoc_tar" -C "$PANDOC_BASE"
 }
 
+# Andrew Gallant's ripgrep setup
+setup_ripgrep() {
+  local RG_INSTALL_DIR="${RG_INSTALL_DIR:-$HOME/.local}"
+  local rg_tar=$(find $PWD/bin/$(uname -m) -name 'ripgrep*')
+  local rg_bin=$(basename $rg_tar)
+  local rg_bin="/tmp/${rg_bin%.tar.gz}/rg"
+
+  case "$rg_tar" in
+    *"tar.gz") ;;
+    *) return 1;;
+  esac
+
+  echo "${FMT_GREEN}Copying Andrew Gallant's rigrep to ~/.local.${FMT_RESET}"
+  tar -xzf "$rg_tar" -C /tmp && cp "$rg_bin" "$RG_INSTALL_DIR/bin"
+}
+
 main() {
   # Parse arguments
   while [ $# -gt 0 ]; do
@@ -601,6 +618,7 @@ main() {
   if [ $SETUP_FZF = yes -o $SETUP_ALL = yes ]; then setup_fzf; fi
   if [ $SETUP_PDC = yes -o $SETUP_ALL = yes ]; then setup_pandoc; fi
   if [ $SETUP_VIM = yes -o $SETUP_ALL = yes ]; then setup_vimrc; fi
+  if [ $SETUP_RIP = yes -o $SETUP_ALL = yes ]; then setup_ripgrep; fi
 }
 
 main "$@"
