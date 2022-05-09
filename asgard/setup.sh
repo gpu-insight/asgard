@@ -586,6 +586,7 @@ setup_pandoc() {
 # Andrew Gallant's ripgrep setup
 setup_ripgrep() {
   local RG_INSTALL_DIR="${RG_INSTALL_DIR:-$HOME/.local}"
+  local RG_BIN_DIR="$RG_INSTALL_DIR/bin"
   local rg_tar=$(find $PWD/bin/$(uname -m) -name 'ripgrep*')
   local rg_bin=$(basename $rg_tar)
   local rg_bin="/tmp/${rg_bin%.tar.gz}/rg"
@@ -596,7 +597,8 @@ setup_ripgrep() {
   esac
 
   echo "${FMT_GREEN}Copying Andrew Gallant's rigrep to ~/.local.${FMT_RESET}"
-  tar -xzf "$rg_tar" -C /tmp && cp "$rg_bin" "$RG_INSTALL_DIR/bin"
+  [ -d "$RG_BIN_DIR" ] || mkdir -p "$RG_BIN_DIR"
+  tar -xzf "$rg_tar" -C /tmp && cp "$rg_bin" "$RG_BIN_DIR"
 }
 
 main() {
