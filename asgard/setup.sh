@@ -593,9 +593,9 @@ setup_ripgrep() {
     *) return 1;;
   esac
 
-  echo "${FMT_GREEN}Copying Andrew Gallant's rigrep to ~/.local.${FMT_RESET}"
+  echo "${FMT_GREEN}Copying Andrew Gallant's ripgrep to ~/.local.${FMT_RESET}"
   [ -d "$RG_INSTALL_DIR" ] || mkdir -p "$RG_INSTALL_DIR"
-  tar --strip-components=1 -xzf "$rg_tar" -C "$RG_INSTALL_DIR"
+  tar -xzf "$rg_tar" -C "$RG_INSTALL_DIR"
 }
 
 main() {
