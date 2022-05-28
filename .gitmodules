@@ -10,3 +10,6 @@
 [submodule "asgard/vimrc"]
 	path = asgard/vimrc
 	url = https://github.com/lucmann/vimrc.git
+[submodule "asgard/zsh-bin"]
+	path = asgard/zsh-bin
+	url = https://github.com/romkatv/zsh-bin.git

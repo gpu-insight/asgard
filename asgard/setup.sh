@@ -72,6 +72,7 @@ SETUP_OMZ=${SETUP_OMZ:-no}
 SETUP_PDC=${SETUP_PDC:-no}
 SETUP_RIP=${SETUP_RIP:-no}
 SETUP_VIM=${SETUP_VIM:-no}
+SETUP_ZSH=${SETUP_ZSH:-no}
 
 command_exists() {
   command -v "$@" >/dev/null 2>&1
@@ -598,6 +599,21 @@ setup_ripgrep() {
   tar -xzf "$rg_tar" -C "$RG_INSTALL_DIR"
 }
 
+# Zsh
+setup_zsh() {
+  local ZSH_INSTALL_DIR="${ZSH_INSTALL_DIR:-$HOME/.local}"
+  local zsh_bin_dir="${zsh_bin_dir:-$PWD/zsh-bin}"
+  local zsh_pkg=$(find $PWD/bin/$(uname -m) -name 'zsh*')
+
+  case "$zsh_pkg" in
+    *"tar.gz") ;;
+    *) return 1;;
+  esac
+
+  echo "${FMT_GREEN}Copying Roman Perepelitsa's zsh-bin to ~/.local.${FMT_RESET}"
+  /bin/sh "$zsh_bin_dir"/install -f "$zsh_pkg" -d "$ZSH_INSTALL_DIR" -e yes
+}
+
 main() {
   # Parse arguments
   while [ $# -gt 0 ]; do
@@ -612,7 +628,8 @@ main() {
 
   setup_color
 
-  # Keep this precedence of setup
+  # DON'T modify the sequence
+  if [ $SETUP_ZSH = yes -o $SETUP_ALL = yes ]; then setup_zsh; fi
   if [ $SETUP_OMZ = yes -o $SETUP_ALL = yes ]; then setup_omz; fi
   if [ $SETUP_FZF = yes -o $SETUP_ALL = yes ]; then setup_fzf; fi
   if [ $SETUP_PDC = yes -o $SETUP_ALL = yes ]; then setup_pandoc; fi
