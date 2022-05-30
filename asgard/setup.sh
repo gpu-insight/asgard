@@ -73,6 +73,7 @@ SETUP_PDC=${SETUP_PDC:-no}
 SETUP_RIP=${SETUP_RIP:-no}
 SETUP_VIM=${SETUP_VIM:-no}
 SETUP_ZSH=${SETUP_ZSH:-no}
+SETUP_AUTOJUMP=${SETUP_AUTOJUMP:-no}
 
 command_exists() {
   command -v "$@" >/dev/null 2>&1
@@ -614,6 +615,25 @@ setup_zsh() {
   /bin/sh "$zsh_bin_dir"/install -f "$zsh_pkg" -d "$ZSH_INSTALL_DIR" -e yes
 }
 
+# William Ting's autojump
+setup_autojump() {
+  # autojump requires Python v2.6+ or Python v3.3+, we prefer to Python 3
+  python_prog=$(command -v python3 || command -v python)
+
+  if [[ -z $python_prog ]]; then
+      echo "autojump requires Python v2.6+ or Python v3.3+, please check"
+      return
+  fi
+
+  local AUTOJUMP_INSTALL_DIR="${AUTOJUMP_INSTALL_DIR:-$HOME/.autojump}"
+  local autojump_src_dir="${autojump_src_dir:-$PWD/autojump}"
+
+  echo "${FMT_GREEN}Copying William Ting's autojump to ${AUTOJUMP_INSTALL_DIR}.${FMT_RESET}"
+  pushd "$autojump_src_dir" >/dev/null
+  $python_prog install.py
+  popd >/dev/null
+}
+
 main() {
   # Parse arguments
   while [ $# -gt 0 ]; do
@@ -630,6 +650,7 @@ main() {
 
   # DON'T modify the sequence
   if [ $SETUP_ZSH = yes -o $SETUP_ALL = yes ]; then setup_zsh; fi
+  if [ $SETUP_AUTOJUMP = yes -o $SETUP_ALL = yes ]; then setup_autojump; fi
   if [ $SETUP_OMZ = yes -o $SETUP_ALL = yes ]; then setup_omz; fi
   if [ $SETUP_FZF = yes -o $SETUP_ALL = yes ]; then setup_fzf; fi
   if [ $SETUP_PDC = yes -o $SETUP_ALL = yes ]; then setup_pandoc; fi

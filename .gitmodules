@@ -13,3 +13,6 @@
 [submodule "asgard/zsh-bin"]
 	path = asgard/zsh-bin
 	url = https://github.com/romkatv/zsh-bin.git
+[submodule "asgard/autojump"]
+	path = asgard/autojump
+	url = https://github.com/wting/autojump.git
