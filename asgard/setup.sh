@@ -634,6 +634,26 @@ setup_autojump() {
   popd >/dev/null
 }
 
+package_list() {
+  echo
+  echo "  zsh        Z shell"
+  echo "  autojump   A cd command that learns - easily navigate directories"
+  echo "  omz        Oh-My-Zsh"
+  echo "  fzf        A fuzzy finder"
+  echo "  pandoc     Universal markup converter"
+  echo "  vimrc      The ultimate Vim configuration"
+  echo "　ripgrep    A enhanced grep"
+}
+
+usage() {
+  echo
+  echo "Usage: ./asgard.run [--[ --setup XXX]]" >&2
+  echo "Options:" >&2
+  echo "  -s, --setup XXX             setup the specified package" >&2
+  echo "  -h, --help                  print this message and exit" >&2
+  echo "  -l, --list                  print the list of packages and exit" >&2
+}
+
 main() {
   # Parse arguments
   while [ $# -gt 0 ]; do
@@ -641,6 +661,8 @@ main() {
       --unattended) RUNZSH=no; CHSH=no ;;
       --skip-chsh) CHSH=no ;;
       --keep-zshrc) KEEP_ZSHRC=yes ;;
+      -h|--help) usage; exit ;;
+      -l|--list) package_list; exit ;;
       -s|--setup) eval SETUP_${2^^}=yes; SETUP_ALL=no; shift ;;
     esac
     shift
