@@ -69,9 +69,9 @@ KEEP_ZSHRC=${KEEP_ZSHRC:-no}
 SETUP_ALL=${SETUP_ALL:-yes}
 SETUP_FZF=${SETUP_FZF:-no}
 SETUP_OMZ=${SETUP_OMZ:-no}
-SETUP_PDC=${SETUP_PDC:-no}
-SETUP_RIP=${SETUP_RIP:-no}
-SETUP_VIM=${SETUP_VIM:-no}
+SETUP_PANDOC=${SETUP_PANDOC:-no}
+SETUP_RIPGREP=${SETUP_RIPGREP:-no}
+SETUP_VIMRC=${SETUP_VIMRC:-no}
 SETUP_ZSH=${SETUP_ZSH:-no}
 SETUP_AUTOJUMP=${SETUP_AUTOJUMP:-no}
 
@@ -675,9 +675,9 @@ main() {
   if [ $SETUP_AUTOJUMP = yes -o $SETUP_ALL = yes ]; then setup_autojump; fi
   if [ $SETUP_OMZ = yes -o $SETUP_ALL = yes ]; then setup_omz; fi
   if [ $SETUP_FZF = yes -o $SETUP_ALL = yes ]; then setup_fzf; fi
-  if [ $SETUP_PDC = yes -o $SETUP_ALL = yes ]; then setup_pandoc; fi
-  if [ $SETUP_VIM = yes -o $SETUP_ALL = yes ]; then setup_vimrc; fi
-  if [ $SETUP_RIP = yes -o $SETUP_ALL = yes ]; then setup_ripgrep; fi
+  if [ $SETUP_PANDOC = yes -o $SETUP_ALL = yes ]; then setup_pandoc; fi
+  if [ $SETUP_VIMRC = yes -o $SETUP_ALL = yes ]; then setup_vimrc; fi
+  if [ $SETUP_RIPGREP = yes -o $SETUP_ALL = yes ]; then setup_ripgrep; fi
 }
 
 main "$@"
