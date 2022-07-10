@@ -9,6 +9,7 @@ The Asgard project itself won't build any of honest-to-goodness tools. It just c
 - [jgm/pandoc](https://github.com/jgm/pandoc)
 - [junegunn/fzf](https://github.com/junegunn/fzf)
 - [megastep/makeself](https://github.com/megastep/makeself)
+- [nelsonenzo/tmux-appimage](https://github.com/nelsonenzo/tmux-appimage)
 - [ohmyzsh/ohmyzsh](https://github.com/ohmyzsh/ohmyzsh)
 - [romkatv/zsh-bin](https://github.com/romkatv/zsh-bin)
 - [wting/autojump](https://github.com/wting/autojump)

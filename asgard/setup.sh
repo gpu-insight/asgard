@@ -67,13 +67,14 @@ KEEP_ZSHRC=${KEEP_ZSHRC:-no}
 
 # Setup options
 SETUP_ALL=${SETUP_ALL:-yes}
+SETUP_AUTOJUMP=${SETUP_AUTOJUMP:-no}
 SETUP_FZF=${SETUP_FZF:-no}
 SETUP_OMZ=${SETUP_OMZ:-no}
 SETUP_PANDOC=${SETUP_PANDOC:-no}
 SETUP_RIPGREP=${SETUP_RIPGREP:-no}
+SETUP_TMUX=${SETUP_TMUX:-no}
 SETUP_VIMRC=${SETUP_VIMRC:-no}
 SETUP_ZSH=${SETUP_ZSH:-no}
-SETUP_AUTOJUMP=${SETUP_AUTOJUMP:-no}
 
 command_exists() {
   command -v "$@" >/dev/null 2>&1
@@ -634,15 +635,57 @@ setup_autojump() {
   popd >/dev/null
 }
 
+# terminal multiplexer tmux
+# binary package from nelsonenzo's tmux-appimage
+setup_tmux() {
+  local TMUX_INSTALL_DIR="${TMUX_INSTALL_DIR:-$HOME/.local/bin}"
+  local tmux_appimage=$(find $PWD/bin/$(uname -m) -name 'tmux*')
+  local tmux_binary="${TMUX_INSTALL_DIR}/tmux"
+  local tmux_config="$HOME/.tmux.conf"
+
+  if [ -z "$tmux_appimage" ]; then
+    echo "Sorry, no available tmux to be installed on your platform $(uname -m)"
+    return 1
+  fi
+
+  case "$tmux_appimage" in
+    *"appimage") ;;
+    *) return 1;;
+  esac
+
+  echo "${FMT_GREEN}Copying Nelson Enzo's tmux.appimage to ${TMUX_INSTALL_DIR}.${FMT_RESET}"
+  [ -d "$TMUX_INSTALL_DIR" ] || mkdir -p "$TMUX_INSTALL_DIR"
+  [ ! -e "$tmux_binary" ] && \
+    cp $tmux_appimage $tmux_binary && \
+      [ ! -x "$tmux_binary" ] && \
+        chmod +x "$tmux_binary"
+
+  # Basic configuration
+  if [ -f "$tmux_config" ]; then
+    old_tmux_config="${tmux_config}-$(date +%Y-%m-%d_%H-%M-%S)"
+    echo "${FMT_YELLOW}Found ${tmux_config}." \
+      "${FMT_GREEN}Backing up to ${old_tmux_config}${FMT_RESET}"
+    mv "$tmux_config" "${old_tmux_config}"
+  fi
+
+  cat > "${tmux_config}" << EOF
+set -s escape-time 0
+setw -g mode-keys vi
+EOF
+
+}
+
 package_list() {
   echo
-  echo "  zsh        Z shell"
   echo "  autojump   A cd command that learns - easily navigate directories"
-  echo "  omz        Oh-My-Zsh"
   echo "  fzf        A fuzzy finder"
+  echo "  omz        Oh-My-Zsh"
   echo "  pandoc     Universal markup converter"
-  echo "  vimrc      The ultimate Vim configuration"
   echo "　ripgrep    A enhanced grep"
+  echo "  tmux       A terminal multiplexer"
+  echo "  vimrc      The ultimate Vim configuration"
+  echo "  zsh        Z shell"
+  echo
 }
 
 usage() {
@@ -652,6 +695,7 @@ usage() {
   echo "  -s, --setup XXX             setup the specified package" >&2
   echo "  -h, --help                  print this message and exit" >&2
   echo "  -l, --list                  print the list of packages and exit" >&2
+  echo
 }
 
 main() {
@@ -678,6 +722,7 @@ main() {
   if [ $SETUP_PANDOC = yes -o $SETUP_ALL = yes ]; then setup_pandoc; fi
   if [ $SETUP_VIMRC = yes -o $SETUP_ALL = yes ]; then setup_vimrc; fi
   if [ $SETUP_RIPGREP = yes -o $SETUP_ALL = yes ]; then setup_ripgrep; fi
+  if [ $SETUP_TMUX = yes -o $SETUP_ALL = yes ]; then setup_tmux; fi
 }
 
 main "$@"
