@@ -16,3 +16,6 @@
 [submodule "asgard/autojump"]
 	path = asgard/autojump
 	url = https://github.com/wting/autojump.git
+[submodule "asgard/tmux-resurrect"]
+	path = asgard/tmux-resurrect
+	url = https://github.com/tmux-plugins/tmux-resurrect.git

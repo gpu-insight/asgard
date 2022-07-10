@@ -12,6 +12,7 @@ The Asgard project itself won't build any of honest-to-goodness tools. It just c
 - [nelsonenzo/tmux-appimage](https://github.com/nelsonenzo/tmux-appimage)
 - [ohmyzsh/ohmyzsh](https://github.com/ohmyzsh/ohmyzsh)
 - [romkatv/zsh-bin](https://github.com/romkatv/zsh-bin)
+- [tmux-plugins/tmux-resurrect](https://github.com/tmux-plugins/tmux-resurrect)
 - [wting/autojump](https://github.com/wting/autojump)
 
 # How to Build

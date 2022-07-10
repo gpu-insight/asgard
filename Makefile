@@ -5,14 +5,15 @@ asgard-subdirs 	:= $(dir $(wildcard $(asgard-dir)/*/*))
 asgard-subdirs 	:= $(filter-out %/bin/, $(sort $(asgard-subdirs)))
 
 MAKESELF 		:= $(abspath $(asgard-dir)/makeself/makeself.sh)
-LABEL			:= "ASGARD makes an easy life"
+LABEL			:= "Asgard Makes An Easy Life"
 # The dot is in terms of asgard-dir
 STARTUP_SCRIPT 	:= ./setup.sh
 OUTPUT 			:= asgard.run
 
 all: $(OUTPUT) summary
 
-$(OUTPUT): $(shell find $(asgard-dir))
+# ignore potential broken symlinks in dependencies
+$(OUTPUT): $(shell find $(asgard-dir) ! -type l)
 	$(MAKESELF) $(asgard-dir) $@ $(LABEL) $(STARTUP_SCRIPT)
 
 summary:

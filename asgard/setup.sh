@@ -73,6 +73,7 @@ SETUP_OMZ=${SETUP_OMZ:-no}
 SETUP_PANDOC=${SETUP_PANDOC:-no}
 SETUP_RIPGREP=${SETUP_RIPGREP:-no}
 SETUP_TMUX=${SETUP_TMUX:-no}
+SETUP_TMUX_RESURRECT=${SETUP_TMUX_RESURRECT:-no}
 SETUP_VIMRC=${SETUP_VIMRC:-no}
 SETUP_ZSH=${SETUP_ZSH:-no}
 
@@ -635,6 +636,31 @@ setup_autojump() {
   popd >/dev/null
 }
 
+# tmux-resurrect
+# persist tmux environment across system restarts
+setup_tmux_resurrect() {
+  local TMUX_PLUGINS_DIR="${TMUX_PLUGINS_DIR:-$HOME/.local/tmux-plugins}"
+  local tmux_resurrect="${PWD}/tmux-resurrect"
+  local tmux_config="${HOME}/.tmux.conf"
+  TMUX_RESURRECT_INSTALL_DIR="${TMUX_RESURRECT_INSTALL_DIR:-$TMUX_PLUGINS_DIR/tmux-resurrect}"
+
+  echo "${FMT_GREEN}Copying tmux-plugins/tmux-resurrect to ${TMUX_PLUGINS_DIR}.${FMT_RESET}"
+  [ -d "$TMUX_PLUGINS_DIR" ] || mkdir -p "$TMUX_PLUGINS_DIR"
+  cp --remove-destination -r ${tmux_resurrect} ${TMUX_PLUGINS_DIR}
+
+  # manual installation
+  if [ -d "$TMUX_RESURRECT_INSTALL_DIR" ]; then
+    if ! grep -E "run-shell .*/resurrect.tmux" $tmux_config >/dev/null 2>&1; then
+      cat >> "$tmux_config" << EOF
+run-shell ${TMUX_RESURRECT_INSTALL_DIR}/resurrect.tmux
+EOF
+    fi
+    return 0
+  else
+    return 1
+  fi
+}
+
 # terminal multiplexer tmux
 # binary package from nelsonenzo's tmux-appimage
 setup_tmux() {
@@ -673,18 +699,21 @@ set -s escape-time 0
 setw -g mode-keys vi
 EOF
 
+  # Assumedly you would like to install tmux-resurrect as well
+  SETUP_TMUX_RESURRECT=yes
 }
 
 package_list() {
   echo
-  echo "  autojump   A cd command that learns - easily navigate directories"
-  echo "  fzf        A fuzzy finder"
-  echo "  omz        Oh-My-Zsh"
-  echo "  pandoc     Universal markup converter"
-  echo "　ripgrep    A enhanced grep"
-  echo "  tmux       A terminal multiplexer"
-  echo "  vimrc      The ultimate Vim configuration"
-  echo "  zsh        Z shell"
+  echo "  autojump            cd command that learns - easily navigate directories"
+  echo "  fzf                 fuzzy finder"
+  echo "  omz                 oh-my-zsh"
+  echo "  pandoc              universal markup converter"
+  echo "　ripgrep             enhanced grep"
+  echo "  tmux                terminal multiplexer"
+  echo "  tmux-resurrect      tmux plugin to persist tmux environment across system restarts"
+  echo "  vimrc               ultimate Vim configuration"
+  echo "  zsh                 z shell"
   echo
 }
 
@@ -707,14 +736,19 @@ main() {
       --keep-zshrc) KEEP_ZSHRC=yes ;;
       -h|--help) usage; exit ;;
       -l|--list) package_list; exit ;;
-      -s|--setup) eval SETUP_${2^^}=yes; SETUP_ALL=no; shift ;;
+      -s|--setup)
+        UPPER_ARG=${2^^}
+        eval SETUP_${UPPER_ARG//-/_}=yes
+        SETUP_ALL=no
+        shift
+        ;;
     esac
     shift
   done
 
   setup_color
 
-  # DON'T modify the sequence
+  # DON'T CHANGE THE ORDER
   if [ $SETUP_ZSH = yes -o $SETUP_ALL = yes ]; then setup_zsh; fi
   if [ $SETUP_AUTOJUMP = yes -o $SETUP_ALL = yes ]; then setup_autojump; fi
   if [ $SETUP_OMZ = yes -o $SETUP_ALL = yes ]; then setup_omz; fi
@@ -723,6 +757,7 @@ main() {
   if [ $SETUP_VIMRC = yes -o $SETUP_ALL = yes ]; then setup_vimrc; fi
   if [ $SETUP_RIPGREP = yes -o $SETUP_ALL = yes ]; then setup_ripgrep; fi
   if [ $SETUP_TMUX = yes -o $SETUP_ALL = yes ]; then setup_tmux; fi
+  if [ $SETUP_TMUX_RESURRECT = yes -o $SETUP_ALL = yes ]; then setup_tmux_resurrect; fi
 }
 
 main "$@"
