@@ -1,6 +1,6 @@
 # Asgard
 
-The Asgard project itself won't build any of honest-to-goodness tools. It just compresses some great development tools or configuration as well as a small setup script into a self-extractable archive by [Stephane Peter's makeself](https://github.com/megastep/makeself). By this way, you will get a self-contained installer which is still working even if the machine is out of the Internet.
+The Asgard project itself won't build any of honest-to-goodness tools. It just compresses several great productivity tools and configuration as well as a small setup script into a self-extractable archive by [Stephane Peter's makeself](https://github.com/megastep/makeself). By this way, you will get a self-contained installer which is still working even if the machine is offline.
 
 # Big Thanks to
 
@@ -25,4 +25,6 @@ make
 
 # How to Use
 
-`asgard.run` is a self-extractable archive in essence. To know how it works, refer to [here](https://github.com/megastep/makeself)
+`asgard.run` is a self-extractable archive in essence. To know how it works, refer to [here](https://github.com/megastep/makeself).
+
+More details, please `./asgard.run -- --help`
