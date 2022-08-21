@@ -347,6 +347,11 @@ setup_zshrc() {
   # Replace $HOME path with '$HOME' in $ZSH variable in .zshrc file
   omz=$(echo "$ZSH" | sed "s|^$HOME/|\$HOME/|")
   sed "s|^export ZSH=.*$|export ZSH=\"${omz}\"|" "$ZSH/templates/zshrc.zsh-template" > ~/.zshrc-omztemp
+
+  # Disable auto-update oh-my-zsh since oh-my-zsh in asgard is not a git repository any more
+  # Do it by means of uncomment
+  sed -i "/disable automatic updates/s/^# //" ~/.zshrc-omztemp
+
   mv -f ~/.zshrc-omztemp ~/.zshrc
 
   echo
