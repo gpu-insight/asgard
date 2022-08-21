@@ -701,6 +701,8 @@ setup_tmux() {
 
   cat > "${tmux_config}" << EOF
 set -s escape-time 0
+set -g set-titles on # update terminal window title
+set -g set-titles-string "#W" # tab names at the bottom of the screen
 setw -g mode-keys vi
 EOF
 
