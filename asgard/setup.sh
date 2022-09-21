@@ -264,51 +264,7 @@ setup_color() {
 }
 
 setup_ohmyzsh() {
-  # Prevent the cloned repository from having insecure permissions. Failing to do
-  # so causes compinit() calls to fail with "command not found: compdef" errors
-  # for users with insecure umasks (e.g., "002", allowing group writability). Note
-  # that this will be ignored under Cygwin by default, as Windows ACLs take
-  # precedence over umasks except for filesystems mounted with option "noacl".
-  umask g-w,o-w
-
-  echo "${FMT_BLUE}Cloning Oh My Zsh...${FMT_RESET}"
-
-  command_exists git || {
-    fmt_error "git is not installed"
-    exit 1
-  }
-
-  ostype=$(uname)
-  if [ -z "${ostype%CYGWIN*}" ] && git --version | grep -q msysgit; then
-    fmt_error "Windows/MSYS Git is not supported on Cygwin"
-    fmt_error "Make sure the Cygwin git package is installed and is first on the \$PATH"
-    exit 1
-  fi
-
-  # Manual clone with git config options to support git < v1.7.2
-  # git init --quiet "$ZSH" && cd "$ZSH" \
-  # && git config core.eol lf \
-  # && git config core.autocrlf false \
-  # && git config fsck.zeroPaddedFilemode ignore \
-  # && git config fetch.fsck.zeroPaddedFilemode ignore \
-  # && git config receive.fsck.zeroPaddedFilemode ignore \
-  # && git config oh-my-zsh.remote origin \
-  # && git config oh-my-zsh.branch "$BRANCH" \
-  # && git remote add origin "$REMOTE" \
-  # && git fetch --depth=1 origin \
-  # && git checkout -b "$BRANCH" "origin/$BRANCH" || {
-  #   [ ! -d "$ZSH" ] || {
-  #     cd -
-  #     rm -rf "$ZSH" 2>/dev/null
-  #   }
-  #   fmt_error "git clone of oh-my-zsh repo failed"
-  #   exit 1
-  # }
-
   cp -r "$OHMYZSH" "$ZSH"
-  # Exit installation directory
-  # cd -
-
   echo
 }
 
@@ -320,7 +276,7 @@ setup_zshrc() {
 
   # Must use this exact name so uninstall.sh can find it
   OLD_ZSHRC=~/.zshrc.pre-oh-my-zsh
-  if [ -f ~/.zshrc ] || [ -h ~/.zshrc ]; then
+  if [ -f ~/.zshrc ] || [ -L ~/.zshrc ]; then
     # Skip this if the user doesn't want to replace an existing .zshrc
     if [ "$KEEP_ZSHRC" = yes ]; then
       echo "${FMT_YELLOW}Found ~/.zshrc.${FMT_RESET} ${FMT_GREEN}Keeping...${FMT_RESET}"
@@ -534,7 +490,7 @@ setup_vimrc() {
 
   # Must use this exact name so uninstall.sh can find it
   OLD_VIMRC=~/.vimrc.pre-amix
-  if [ -f ~/.vimrc ] || [ -h ~/.vimrc ]; then
+  if [ -f ~/.vimrc ] || [ -L ~/.vimrc ]; then
     if [ -e "$OLD_VIMRC" ]; then
       OLD_OLD_VIMRC="${OLD_VIMRC}-$(date +%Y-%m-%d_%H-%M-%S)"
       if [ -e "$OLD_OLD_VIMRC" ]; then
@@ -754,6 +710,10 @@ main() {
   done
 
   setup_color
+
+  if [ "$PATH" != *"$HOME/.local/bin"* ]; then
+      export PATH="$HOME/.local/bin":"$PATH"
+  fi
 
   # DON'T CHANGE THE ORDER
   if [ $SETUP_ZSH = yes -o $SETUP_ALL = yes ]; then setup_zsh; fi
