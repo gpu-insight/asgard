@@ -511,6 +511,31 @@ setup_vimrc() {
     "and adding it to ~/.vimrc.${FMT_RESET}"
 
   cp -r "$VIMRC" "$VIMRUNTIME" && sh "$VIMRUNTIME"/install_awesome_vimrc.sh
+
+  transition2neovim
+}
+
+# Transition to neovim if any
+transition2neovim() {
+  command_exists nvim || return
+
+  local NVIM_CONFIG_DIR="$HOME/.config/nvim"
+  local NVIM_USER_CONFIG="$NVIM_CONFIG_DIR/init.vim"
+
+  test -d "$NVIM_CONFIG_DIR" || mkdir -p $NVIM_CONFIG_DIR
+
+  # Whether there is already a user config or not, we add these contents to it.
+  # Note that we assume that your existing Vim config is loaded from ~/.vim_runtime
+  cat >> $NVIM_USER_CONFIG << EOF
+" Added by asgard.run automatically
+set runtimepath^=~/.vim_runtime runtimepath+=~/.vim_runtime/after
+let &packpath = &runtimepath
+source ~/.vimrc
+" Asgard End
+EOF
+
+  echo "${FMT_GREEN}Congrats! Your existing Vim config has been transitioned to NeoVim${FMT_RESET}"
+  echo "${FMT_GREEN}Restart Nvim. Go ahead${FMT_RESET}"
 }
 
 # Part of junegunn's fzf setup
@@ -687,6 +712,7 @@ usage() {
   echo "  -s, --setup XXX             setup the specified package" >&2
   echo "  -h, --help                  print this message and exit" >&2
   echo "  -l, --list                  print the list of packages and exit" >&2
+  echo "      --vim2neo               transition existing Vim config to Nvim and exit" >&2
   echo
 }
 
@@ -705,11 +731,10 @@ main() {
         SETUP_ALL=no
         shift
         ;;
+      --vim2neo) transition2neovim; exit ;;
     esac
     shift
   done
-
-  setup_color
 
   if [ "$PATH" != *"$HOME/.local/bin"* ]; then
       export PATH="$HOME/.local/bin":"$PATH"
@@ -726,5 +751,7 @@ main() {
   if [ $SETUP_TMUX = yes -o $SETUP_ALL = yes ]; then setup_tmux; fi
   if [ $SETUP_TMUX_RESURRECT = yes -o $SETUP_ALL = yes ]; then setup_tmux_resurrect; fi
 }
+
+setup_color
 
 main "$@"
