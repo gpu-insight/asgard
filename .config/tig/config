@@ -1,0 +1,12 @@
+# Display commit id by default
+set main-view-id-display = yes
+
+# Don't use topo-order for the commit graph
+set commit-order = default
+
+# Don't show diffstat
+set log-options =
+
+# Limit number of commits loaded by default to 1000
+set main-options = -n 1000
+
