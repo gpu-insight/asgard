@@ -1,21 +1,21 @@
 [submodule "asgard/ohmyzsh"]
-	path = asgard/ohmyzsh
+	path = third-party/ohmyzsh
 	url = https://github.com/ohmyzsh/ohmyzsh.git
 [submodule "asgard/makeself"]
-	path = asgard/makeself
+	path = third-party/makeself
 	url = https://github.com/megastep/makeself.git
 [submodule "asgard/fzf"]
-	path = asgard/fzf
+	path = third-party/fzf
 	url = https://github.com/junegunn/fzf.git
 [submodule "asgard/vimrc"]
-	path = asgard/vimrc
+	path = third-party/vimrc
 	url = https://github.com/lucmann/vimrc.git
 [submodule "asgard/zsh-bin"]
-	path = asgard/zsh-bin
+	path = third-party/zsh-bin
 	url = https://github.com/romkatv/zsh-bin.git
 [submodule "asgard/autojump"]
-	path = asgard/autojump
+	path = third-party/autojump
 	url = https://github.com/wting/autojump.git
 [submodule "asgard/tmux-resurrect"]
-	path = asgard/tmux-resurrect
+	path = third-party/tmux-resurrect
 	url = https://github.com/tmux-plugins/tmux-resurrect.git

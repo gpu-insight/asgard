@@ -1,6 +1,6 @@
 .PHONY: all clean help summary
 
-asgard-dir  	:= asgard
+asgard-dir  	:= third-party
 asgard-subdirs 	:= $(dir $(wildcard $(asgard-dir)/*/*))
 asgard-subdirs 	:= $(filter-out %/bin/, $(sort $(asgard-subdirs)))
 
@@ -10,19 +10,23 @@ LABEL			:= "Asgard Makes An Easy Life"
 STARTUP_SCRIPT 	:= ./setup.sh
 OUTPUT 			:= asgard.run
 
-all: $(OUTPUT) summary
+.PHONY : help summary asgard clean
+.DEFAULT_GOAL := help
+
+help: ## Show this help
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z0-9_-]+:.*?## / {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+
+asgard: $(OUTPUT)
+asgard: ## Create a self-extracting archive named `asgard.run`
 
 # ignore potential broken symlinks in dependencies
 $(OUTPUT): $(shell find $(asgard-dir) ! -type l)
 	$(MAKESELF) $(asgard-dir) $@ $(LABEL) $(STARTUP_SCRIPT)
 
-summary:
+summary: ## List third-party tools we have collected so far
 	@echo 'Third-party development tools or plugins archived in "$(OUTPUT)"'
 	@./utils/tree.sh $(asgard-dir)/bin/
 	@$(foreach a, $(asgard-subdirs), printf "%s\\n" $(a);)
 
 clean:
-	$(RM) $(OUTPUT)
-
-help:
-	$(info Target: all $(OUTPUT) clean help)
+	$(RM) $(OUTPUT) *.txt
