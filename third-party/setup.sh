@@ -477,6 +477,46 @@ EOF
   # exec zsh -l
 }
 
+# Transition to neovim if any
+transition2neovim() {
+  command_exists nvim || return
+
+  local NVIM_CONFIG_DIR="$HOME/.config/nvim"
+  local NVIM_USER_CONFIG="$NVIM_CONFIG_DIR/init.vim"
+
+  test -d "$NVIM_CONFIG_DIR" || mkdir -p $NVIM_CONFIG_DIR
+
+  # Whether there is already a user config or not, we add these contents to it.
+  # Note that we assume that your existing Vim config is loaded from ~/.vim_runtime
+  cat >> $NVIM_USER_CONFIG << EOF
+" Added by asgard.run automatically
+set runtimepath^=~/.vim_runtime runtimepath+=~/.vim_runtime/after
+let &packpath = &runtimepath
+source ~/.vimrc
+" Asgard End
+EOF
+
+  echo "${FMT_GREEN}Congrats! Your existing Vim config has been transitioned to NeoVim${FMT_RESET}"
+  echo "${FMT_GREEN}Restart Nvim. Go ahead${FMT_RESET}"
+}
+
+setup_neovim() {
+    if command_exists nvim; then
+        transition2neovim
+        return
+    fi
+
+    if command_exists apt-get; then
+        sudo apt-get install -y neovim
+    fi
+
+    if [ $? -ne 0 ]; then
+        cd $PWD/neovim && make CMAKE_BUILD_TYPE=RelWithDebInfo && sudo make install
+    fi
+
+    transition2neovim
+}
+
 # Part of amix's vimrc setup
 # Borrow from oh-my-zsh's setup_zshrc
 setup_vimrc() {
@@ -512,30 +552,15 @@ setup_vimrc() {
 
   cp -r "$VIMRC" "$VIMRUNTIME" && sh "$VIMRUNTIME"/install_awesome_vimrc.sh
 
-  transition2neovim
-}
-
-# Transition to neovim if any
-transition2neovim() {
-  command_exists nvim || return
-
-  local NVIM_CONFIG_DIR="$HOME/.config/nvim"
-  local NVIM_USER_CONFIG="$NVIM_CONFIG_DIR/init.vim"
-
-  test -d "$NVIM_CONFIG_DIR" || mkdir -p $NVIM_CONFIG_DIR
-
-  # Whether there is already a user config or not, we add these contents to it.
-  # Note that we assume that your existing Vim config is loaded from ~/.vim_runtime
-  cat >> $NVIM_USER_CONFIG << EOF
-" Added by asgard.run automatically
-set runtimepath^=~/.vim_runtime runtimepath+=~/.vim_runtime/after
-let &packpath = &runtimepath
-source ~/.vimrc
-" Asgard End
-EOF
-
-  echo "${FMT_GREEN}Congrats! Your existing Vim config has been transitioned to NeoVim${FMT_RESET}"
-  echo "${FMT_GREEN}Restart Nvim. Go ahead${FMT_RESET}"
+  # Prompt for user choice on if they'd like to setup neovim
+  printf '%sDo you want to switch to neovim? [Y/n]%s ' \
+    "$FMT_YELLOW" "$FMT_RESET"
+  read -r opt
+  case $opt in
+    y*|Y*|"") setup_neovim;;
+    n*|N*) echo "${FMT_RED}neovim setup skipped.${FMT_RESET}"; return ;;
+    *) echo "${FMT_RED}Invalid choice. neovim setup skipped.${FMT_RESET}"; return ;;
+  esac
 }
 
 # Part of junegunn's fzf setup

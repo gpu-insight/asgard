@@ -19,3 +19,6 @@
 [submodule "asgard/tmux-resurrect"]
 	path = third-party/tmux-resurrect
 	url = https://github.com/tmux-plugins/tmux-resurrect.git
+[submodule "third-party/neovim"]
+	path = third-party/neovim
+	url = https://github.com/neovim/neovim.git
