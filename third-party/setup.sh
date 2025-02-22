@@ -460,7 +460,6 @@ EOF
     else
       echo "You'll need to remove it if you want to reinstall."
     fi
-    exit 1
   fi
 
   setup_ohmyzsh
