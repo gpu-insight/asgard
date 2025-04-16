@@ -507,9 +507,8 @@ setup_neovim() {
 
     if command_exists apt-get; then
         sudo apt-get install -y neovim
-    fi
-
-    if [ $? -ne 0 ]; then
+    else
+        echo "${FMT_YELLOW}nvim not found, will install from source ...${FMT_RESET}"
         cd $PWD/neovim && make CMAKE_BUILD_TYPE=RelWithDebInfo && sudo make install
     fi
 
