@@ -500,19 +500,29 @@ EOF
 }
 
 setup_neovim() {
-    if command_exists nvim; then
-        transition2neovim
-        return
-    fi
+  local NVIM_BASE="${NVIM_BASE:-$HOME/.local}"
+  local nvim_tar=$(find $PWD/bin/$(uname -m) -name 'nvim*')
 
-    if command_exists apt-get; then
-        sudo apt-get install -y neovim
-    else
-        echo "${FMT_YELLOW}nvim not found, will install from source ...${FMT_RESET}"
-        cd $PWD/neovim && make CMAKE_BUILD_TYPE=RelWithDebInfo && sudo make install
-    fi
+  case "$nvim_tar" in
+    *"tar.gz") ;;
+    *)
+      echo "${FMT_RED}nvim not found${FMT_RESET}"
+      return 1
+      ;;
+  esac
 
-    transition2neovim
+  if command_exists nvim; then
+      transition2neovim
+      return
+  fi
+
+  tar --strip-components=1 -xzf "$nvim_tar" -C "$NVIM_BASE"
+
+  if [ $? -eq 0 ]; then
+      transition2neovim
+  else
+      echo "${FMT_RED}Failed to extract ${nvim_tar} to ${NVIM_BASE}!${FMT_RESET}"
+  fi
 }
 
 # Part of amix's vimrc setup
