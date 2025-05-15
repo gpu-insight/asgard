@@ -1,0 +1,3 @@
+https://github.com/VSCodeVim/Vim/releases/download/v1.29.0/vim-1.29.0.vsix
+https://github.com/mesonbuild/meson/releases/download/1.3.0/meson-1.3.0.tar.gz
+https://github.com/llvm/llvm-project/releases/download/llvmorg-19.1.0/llvm-project-19.1.0.src.tar.xz

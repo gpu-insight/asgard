@@ -4,6 +4,8 @@ asgard-dir  	:= third-party
 asgard-subdirs 	:= $(dir $(wildcard $(asgard-dir)/*/*))
 asgard-subdirs 	:= $(filter-out %/bin/, $(sort $(asgard-subdirs)))
 
+download-dir	:= $(asgard-dir)/download
+
 MAKESELF 		:= $(abspath $(asgard-dir)/makeself/makeself.sh)
 LABEL			:= "Asgard Makes An Easy Life"
 # The dot is in terms of asgard-dir
@@ -28,5 +30,24 @@ summary: ## List third-party tools we have collected so far
 	@./utils/tree.sh $(asgard-dir)/bin/
 	@$(foreach a, $(asgard-subdirs), printf "%s\\n" $(a);)
 
+# Makefile is based on timestamp so that download only happens once
+pre-download: $(addprefix $(download-dir)/, $(shell cat urls.txt | xargs -n 1 basename))
+	@echo 'All files are downloaded to the "download" directory'
+
+# note that the file name is the last part of the URL
+# $(@F) is makefile built-in variable that is equivalent to $(basename $@)
+$(download-dir)/%: urls.txt
+	@set -e; \
+	[ -d $(download-dir) ] || mkdir -p $(download-dir)
+	@echo 'Checking $@...'
+	@set -e; \
+	if [ ! -f "$@" ]; then \
+		url=$$(grep -F "$(@F)" urls.txt); \
+		echo "Downloading $$url"; \
+		curl -L -o "$@" "$$url"; \
+	else \
+		echo "$@ already exists, skipping download"; \
+	fi
+
 clean:
-	$(RM) $(OUTPUT) *.txt
+	$(RM) $(OUTPUT) $(download-dir)/*
